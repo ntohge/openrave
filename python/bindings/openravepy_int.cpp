@@ -1359,6 +1359,16 @@ bool PyEnvironmentBase::CheckCollision(object o1, PyKinBodyPtr pybody2)
     if( !!pbody1 ) {
         return _penv->CheckCollision(pbody1,pbody2);
     }
+    if (PyList_Check(o1.ptr())) {
+        py::list l1 = py::extract<py::list>(o1);
+        const int numitems = len(l1);
+        for (int i = 0; i < numitems; i++) {
+            object o = py::extract<object>(l1[i]);
+            if ( this->CheckCollision(o, pybody2) )
+                return true;
+        }
+        return false;
+    }
     throw OPENRAVE_EXCEPTION_FORMAT0(_("CheckCollision(object) invalid argument"),ORE_InvalidArguments);
 }
 
